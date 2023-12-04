@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ProductCard } from "../components/ProductCard/productCard.component";
 import { products, placeholders } from "../data/products";
 import { SearchBox } from "../components/SearchBox/searchBox.component";
@@ -13,11 +13,14 @@ import {
 import "bootstrap/dist/css/bootstrap.css";
 import { ProductProps } from "../components/ProductCard/productCard.type";
 
+
 const ProductSelection = () => {
   const [selectedProducts, setSelectedProducts] = useState(placeholders);
   const [searchData, setSearchData] = useState([]);
   const [isListOpen, setListOpen] = useState(false);
-  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const wrapperRef = useRef<any>(null);
+
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => { /// can be debounced too
     const availableProductsArray = [] as any;
     const searchValue = e.target.value;
     products.forEach((item) => {
@@ -66,7 +69,19 @@ const ProductSelection = () => {
     setListOpen(false);
   };
 
-  const onRemove = () => {};
+  const handleClickOutside = (event: any) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      setListOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, false);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, false);
+    };
+  }, []);
+
 
   return (
     <ProductSelectionWrapper className="container d-flex justify-content-center align-items-center">
@@ -87,12 +102,14 @@ const ProductSelection = () => {
             You will be able to add as many as you need later but for now let's
             add four.
           </h5>
-          <SearchBox onChange={onSearch} />
+          <SearchBox onChange={onSearch} /> 
           {isListOpen ? (
-            <ProductsList
-              data={searchData}
-              onClick={(item) => onSelection(item as ProductProps) as any}
-            />
+            <div ref={wrapperRef}>
+                <ProductsList
+                  data={searchData}
+                  onClick={(item) => onSelection(item as ProductProps) as any}
+                />
+            </div>
           ) : null}
           <button className="next-btn" onClick={onNextClick}>
             Next

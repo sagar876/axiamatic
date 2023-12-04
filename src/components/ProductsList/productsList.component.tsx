@@ -10,7 +10,7 @@ export const ProductsList = (props: ProductListProps) => {
         {data?.map((item) => {
           return (
             <li onClick={() => onClick(item)}>
-              <span>{item?.image}</span>
+              <span><img src={item?.image}/></span>
               <span>{item?.title}</span>
             </li>
           );

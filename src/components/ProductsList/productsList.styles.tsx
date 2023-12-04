@@ -21,6 +21,10 @@ export const StyledProductsList = styled.div`
             margin-bottom: 15px;
             font-size: 13px;
             cursor: pointer;
+            img{
+                width: 25px;
+                margin-right: 5px;
+            }
         }
         li:last-child{
             margin: 0;
